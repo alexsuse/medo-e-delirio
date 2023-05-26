@@ -1,8 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart';
@@ -18,7 +16,6 @@ import 'package:share_plus/share_plus.dart';
 
 import '../color_palette.dart';
 import '../models/audio.dart';
-import '../services/topic_subscription_service.dart';
 import 'home/home_model.dart';
 
 class HomeScreenBloc extends StatefulWidget {
@@ -45,14 +42,9 @@ class _HomeScreenBlocState extends State<HomeScreenBloc> {
   late AudioPlayer audioPlayer;
   int actualIdPlayind = -1;
 
-  final TopicSubscriptionService subscriptionService =
-      TopicSubscriptionService();
-
   @override
   void initState() {
     super.initState();
-    List<String> topics = ['all'];
-    subscriptionService.subscribeIfAlreadyNot(topics);
     audioPlayer = AudioPlayer();
   }
 
@@ -155,8 +147,9 @@ class _HomeScreenBlocState extends State<HomeScreenBloc> {
                             }
                           },
                           decoration: InputDecoration(
-                            labelStyle:
-                                TextStyle(color: ColorPalette.secondary, fontSize: _screenSize.width * .04),
+                            labelStyle: TextStyle(
+                                color: ColorPalette.secondary,
+                                fontSize: _screenSize.width * .04),
                             hintStyle: TextStyle(color: ColorPalette.secondary),
                             hintText: 'autor ou descrição',
                             labelText: 'digite sua pesquisa',

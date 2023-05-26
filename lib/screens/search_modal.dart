@@ -1,11 +1,6 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:medo_e_delirio_app/color_palette.dart';
-import 'package:medo_e_delirio_app/widgets/default_error_message.dart';
-
-import '../models/audio.dart';
-import '../widgets/default_progress_indicator.dart';
 
 class SearchModal extends StatefulWidget {
   @override
@@ -57,7 +52,6 @@ class _SearchModalState extends State<SearchModal> {
                         Text(
                           'Em breve, aqui ficarão seus áudios favoritos.\n\nAproveite, se puder, e pague uma cerveja ao desenvolvedor por PIX. É só copiar a chave abaixo mantendo o dedo em cima dela.',
                           textAlign: TextAlign.justify,
-
                           style: TextStyle(
                             wordSpacing: 1.2,
                             fontSize: _screenSize.height * 0.018,
@@ -161,8 +155,7 @@ class _SearchModalState extends State<SearchModal> {
                       child: Text('voltar'),
                       style: OutlinedButton.styleFrom(
                           primary: Color(0XFF629460),
-                          side: BorderSide(
-                              width: 1, color: Color(0XFF629460)),
+                          side: BorderSide(width: 1, color: Color(0XFF629460)),
                           backgroundColor: Colors.transparent,
                           textStyle: TextStyle(
                             fontSize: _screenSize.height * 0.02,

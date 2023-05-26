@@ -1,8 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart';
@@ -16,7 +14,6 @@ import 'package:share_plus/share_plus.dart';
 
 import '../color_palette.dart';
 import '../models/audio.dart';
-import '../services/topic_subscription_service.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -28,23 +25,8 @@ class _HomeScreenState extends State<HomeScreen> {
   late AudioPlayer audioPlayer;
   int actualIdPlayind = -1;
 
-  final TopicSubscriptionService subscriptionService =
-      TopicSubscriptionService();
-
   Future<List<Audio>> _init(String search) async {
     List<Audio> audios = [];
-
-    await FirebaseFirestore.instance
-        .collection('audios')
-        .orderBy('id', descending: true)
-        .get()
-        .then((QuerySnapshot querySnapshot) => {
-              querySnapshot.docs.forEach((document) {
-                Map<String, dynamic> data =
-                    document.data()! as Map<String, dynamic>;
-                audios.add(Audio.fromJson(data));
-              })
-            });
 
     return audios;
   }
@@ -53,7 +35,6 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     List<String> topics = ['all'];
-    subscriptionService.subscribeIfAlreadyNot(topics);
     audioPlayer = AudioPlayer();
   }
 
