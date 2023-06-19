@@ -1,32 +1,50 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:http/http.dart';
+import 'dart:typed_data';
+import 'package:share_plus/share_plus.dart';
+
+import '../models/audio.dart';
+import '../utils/audio_singleton.dart';
+import 'package:cross_file/cross_file.dart';
+
+Function _pressFunction(Audio audio) {
+  return () async {
+    AudioPlayerSingleton.instance.audioPlayer.setVolume(1.0);
+    AudioPlayerSingleton.instance.audioPlayer.setUrl(audio.url());
+    await AudioPlayerSingleton.instance.audioPlayer.play();
+  };
+}
+
+Function _onLongPressFunction(Audio audio) {
+  return () async {
+    Uint8List bytes = await readBytes(audio.uri());
+    XFile sharedFile = XFile.fromData(bytes, mimeType: 'audio/mpeg');
+
+    await Share.shareXFiles([sharedFile]);
+  };
+}
 
 class MediaPanel extends StatelessWidget {
-  const MediaPanel({
-    required this.onPress,
-    required this.screenSize,
-    required this.label,
-    required this.isPlaying,
-    required this.author,
-    required this.isFavorite,
-    required this.favoriteAction,
-    required this.onLongPress,
-  });
+  MediaPanel(
+    this.screenSize,
+    this.audio,
+  )   : onPress = _pressFunction(audio),
+        onLongPress = _onLongPressFunction(audio) {}
 
+  final Audio audio;
   final Function onPress;
   final Size screenSize;
-  final String label;
-  final String author;
-  final bool isPlaying;
-  final bool isFavorite;
   final Function onLongPress;
-  final Function favoriteAction;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () { this.onPress(); },
-      onLongPress: () { this.onLongPress(); }, // this.onLongPress,
+      onTap: () {
+        this.onPress();
+      },
+      onLongPress: () {
+        this.onLongPress();
+      }, // this.onLongPress,
       child: Container(
         margin: EdgeInsets.symmetric(
             vertical: screenSize.width * .01,
@@ -41,32 +59,16 @@ class MediaPanel extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              this.label,
+              this.audio.label,
               overflow: TextOverflow.clip,
               style: TextStyle(
                   fontSize: screenSize.width * .036, color: Colors.white),
             ),
-            isPlaying
-                ? Align(
-                    alignment: Alignment.center,
-                    child: Container(
-                      width: screenSize.height * 0.015,
-                      height: screenSize.height * 0.015,
-                      child: Center(
-                        child: CircularProgressIndicator(
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            Colors.white,
-                          ),
-                          strokeWidth: 1.0,
-                        ),
-                      ),
-                    ))
-                : Container(),
             Spacer(),
             Padding(
               padding: EdgeInsets.only(top: screenSize.width * .02),
               child: Text(
-                this.author,
+                this.audio.author,
                 overflow: TextOverflow.clip,
                 style: TextStyle(
                     fontSize: screenSize.width * .032, color: Colors.yellow),

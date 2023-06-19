@@ -11,6 +11,14 @@ class Audio {
   String _type;
   DateTime _date;
 
+  String url() {
+    return 'https://sidroniolima.com.br/med/mp3/${this.fileName}';
+  }
+
+  Uri uri() {
+    return Uri.https('sidroniolima.com.br', '/med/mp3/${this.fileName}');
+  }
+
   Audio(int id, String fileName, String author, String label, String type,
       DateTime date)
       : this._id = id,

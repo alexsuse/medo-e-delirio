@@ -1,18 +1,11 @@
-import 'dart:io';
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:http/http.dart';
-import 'package:just_audio/just_audio.dart';
 import 'package:medo_e_delirio_app/screens/home/home_bloc.dart';
 import 'package:medo_e_delirio_app/screens/search_modal.dart';
 import 'package:medo_e_delirio_app/widgets/default_error_message.dart';
 import 'package:medo_e_delirio_app/widgets/default_progress_indicator.dart';
 import 'package:medo_e_delirio_app/widgets/media_panel.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:share_plus/share_plus.dart';
 
 import '../color_palette.dart';
 import '../models/audio.dart';
@@ -39,18 +32,14 @@ class HomeScreenBloc extends StatefulWidget {
 
 class _HomeScreenBlocState extends State<HomeScreenBloc> {
   final searchController = TextEditingController();
-  late AudioPlayer audioPlayer;
-  int actualIdPlayind = -1;
 
   @override
   void initState() {
     super.initState();
-    audioPlayer = AudioPlayer();
   }
 
   @override
   void dispose() {
-    audioPlayer.dispose();
     searchController.dispose();
     super.dispose();
   }
@@ -170,48 +159,7 @@ class _HomeScreenBlocState extends State<HomeScreenBloc> {
                         crossAxisCount: 3,
                         shrinkWrap: true,
                         children: audios.map((Audio audio) {
-                          return MediaPanel(
-                            author: audio.author,
-                            isFavorite: false,
-                            favoriteAction: () {},
-                            isPlaying: false,
-                            onLongPress: () async {
-                              setState(() {
-                                //this.actualIdPlayind = audio.id;
-                              });
-
-                              Uint8List bytes = await readBytes(Uri.https(
-                                  'sidroniolima.com.br',
-                                  '/med/mp3/${audio.fileName}'));
-
-                              final temp = await getTemporaryDirectory();
-                              final path = '${temp.path}/${audio.fileName}';
-
-                              File(path).writeAsBytesSync(bytes);
-
-                              await Share.shareFiles([path],
-                                  mimeTypes: ['audio/mpeg']);
-
-                              setState(() {
-                                //this.actualIdPlayind = -1;
-                              });
-                            },
-                            onPress: () async {
-                              setState(() {
-                                //this.actualIdPlayind = audio.id;
-                              });
-                              audioPlayer.setVolume(1.0);
-                              audioPlayer.setUrl(
-                                  'https://sidroniolima.com.br/med/mp3/${audio.fileName}');
-                              await audioPlayer.play();
-
-                              setState(() {
-                                this.actualIdPlayind = -1;
-                              });
-                            },
-                            screenSize: _screenSize,
-                            label: audio.label,
-                          );
+                          return MediaPanel(_screenSize, audio);
                         }).toList(),
                       ),
                     ],

@@ -154,8 +154,7 @@ class _SearchModalState extends State<SearchModal> {
                       },
                       child: Text('voltar'),
                       style: OutlinedButton.styleFrom(
-                          primary: Color(0XFF629460),
-                          side: BorderSide(width: 1, color: Color(0XFF629460)),
+                          foregroundColor: Color(0XFF629460), side: BorderSide(width: 1, color: Color(0XFF629460)),
                           backgroundColor: Colors.transparent,
                           textStyle: TextStyle(
                             fontSize: _screenSize.height * 0.02,
