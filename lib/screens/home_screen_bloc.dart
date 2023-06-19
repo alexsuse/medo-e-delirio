@@ -1,4 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:http/http.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:medo_e_delirio_app/screens/home/home_bloc.dart';
 import 'package:medo_e_delirio_app/screens/search_modal.dart';
@@ -16,14 +20,50 @@ class HomeScreenBloc extends StatefulWidget {
 
   HomeScreenBloc({required this.bloc});
 
-  static Widget create(BuildContext context, List<Audio> audios) {
-    return Provider<HomeBloc>(
-      create: (_) => HomeBloc(audios: audios),
-      child: Consumer<HomeBloc>(
-        builder: (_, bloc, __) => HomeScreenBloc(bloc: bloc),
-      ),
-      dispose: (_, bloc) => bloc.dispose(),
-    );
+  static Future<List<Audio>> _init() async {
+    List<Audio> audios = [];
+
+    Uint8List bytes =
+        await readBytes(Uri.https('sidroniolima.com.br', '/med/audios.json'));
+
+    final data = await jsonDecode(utf8.decode(bytes));
+
+    for (final item in data) {
+      audios.add(Audio.fromJson(item));
+    }
+
+    audios.sort((a, b) => b.id.compareTo(a.id));
+
+    return audios;
+  }
+
+  static Widget create(BuildContext context) {
+    return FutureBuilder(
+        future: _init(),
+        builder: (BuildContext context, AsyncSnapshot<List<Audio>> snapshot) {
+          if (snapshot.hasError) {
+            print(snapshot.error);
+            return DefaultErrorMessage(action: () {
+              //this._search([]);
+            });
+          }
+
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+                child: DefaultProgressIndicator(
+                    message: 'Carregando as vírgulas, oh cara!'));
+          }
+
+          List<Audio> audios = snapshot.hasData ? snapshot.data! : [];
+
+          return Provider<HomeBloc>(
+            create: (_) => HomeBloc(audios: audios),
+            child: Consumer<HomeBloc>(
+              builder: (_, bloc, __) => HomeScreenBloc(bloc: bloc),
+            ),
+            dispose: (_, bloc) => bloc.dispose(),
+          );
+        });
   }
 
   @override
