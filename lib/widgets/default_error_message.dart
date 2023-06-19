@@ -24,7 +24,8 @@ class DefaultErrorMessage extends StatelessWidget {
             onPressed: () => this.action,
             child: Text('tentar de novo'),
             style: OutlinedButton.styleFrom(
-                foregroundColor: ColorPalette.secondary, side: BorderSide(width: 1, color: ColorPalette.secondary),
+                foregroundColor: ColorPalette.secondary,
+                side: BorderSide(width: 1, color: ColorPalette.secondary),
                 backgroundColor: Colors.transparent,
                 textStyle: TextStyle(
                   fontSize: _screenSize.height * 0.02,

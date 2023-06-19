@@ -145,12 +145,7 @@ class _HomeScreenBlocState extends State<HomeScreenBloc> {
                     });
                   }
 
-                  if (!snapshot.hasData) {
-                    return DefaultProgressIndicator(
-                        message: 'Calma, fdp. Calma!');
-                  }
-
-                  if (snapshot.data!.isLoading) {
+                  if (!snapshot.hasData || snapshot.data!.isLoading) {
                     return DefaultProgressIndicator(
                         message: 'Calma, fdp. Calma!');
                   }
